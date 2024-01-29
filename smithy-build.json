@@ -1,0 +1,14 @@
+{
+    "version": "1.0",
+    "sources": ["model"],
+    "maven": {
+        "repositories": [
+            {
+                "url": "file:///Users/masm/.m2/repository"
+            }
+        ],
+        "dependencies": [
+            "mx.sugus.syntax.java:smithy-java-syntax-traits:0.1"
+        ]
+    }
+}

@@ -37,6 +37,12 @@ structure Http {
   responseCode: Integer
 }
 
+enum NullabilityHandling {
+    SMITHY = "smithy"
+    NOT_NULL = "bearer"
+    NULL = "null"
+}
+
 list StringList {
   member: String
 }
@@ -93,6 +99,7 @@ structure Operation {
   output: ShapeReference
   documentationUrl: String
   documentation: String
+  idempotent: Boolean
   authorizer: String
   errors: ShapeReferenceList
   endpointdiscovery: EndpointDiscovery

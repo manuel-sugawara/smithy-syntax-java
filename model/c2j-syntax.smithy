@@ -8,31 +8,56 @@ use mx.sugus.syntax.java#isa
 use mx.sugus.syntax.java#java
 use mx.sugus.syntax.java#optional
 
-// -- Util
-@java("java.lang.Object")
-structure JavaObject {}
-
 // -- Syntax Format
 @interface
 structure SyntaxNode {}
 
 
+// -- Service
+
 @isa(SyntaxNode)
-structure ShapeReference {
+structure C2jService {
+  version: String
+  metadata: C2jMetadata
+  operations: OperationMap
+  shapes: ShapeMap
+}
+
+@isa(SyntaxNode)
+structure C2jMetadata {
+  apiVersion: String
+  endpointPrefix: String
+  signingName: String
+  serviceAbbreviation: String
+  serviceFullName: String
+  serviceId: String
+  xmlNamespace: String
+  protocol: String
+  jsonVersion: String
+  awsQueryCompatible: StringToStringMap
+  resultWrapped: Boolean
+  signatureVersion: String
+  targetPrefix: String
+  uid: String
+  auth: StringList
+}
+
+@isa(SyntaxNode)
+structure C2jShapeReference {
   shape: String
 }
 
-list ShapeReferenceList {
-  member: ShapeReference
+list C2jShapeReferenceList {
+  member: C2jShapeReference
 }
 
-enum HttpMethod {
+enum C2jHttpMethod {
   POST, GET, PUT, OPTIONS, DELETE
 }
 
 @isa(SyntaxNode)
-structure Http {
-  method: HttpMethod
+structure C2jHttp {
+  method: C2jHttpMethod
   requestUri: String
   responseCode: Integer
 }
@@ -47,22 +72,27 @@ list StringList {
   member: String
 }
 
+map StringToStringMap {
+  key: String 
+  value: String
+}
+
 @isa(SyntaxNode)
-structure StaticContextParam {
+structure C2jStaticContextParam {
 
 }
 
 @isa(SyntaxNode)
-structure EndpointDiscovery {
+structure C2jEndpointDiscovery {
 }
 
 @isa(SyntaxNode)
-structure RequestCompression {
+structure C2jRequestCompression {
   encodings: StringList
 }
 
 @isa(SyntaxNode)
-structure HttpChecksum {
+structure C2jHttpChecksum {
   requestChecksumRequired: Boolean
   requestAlgorithmMember: String
   requestValidationModeMember: String
@@ -70,7 +100,7 @@ structure HttpChecksum {
 }
 
 @isa(SyntaxNode)
-structure EndpointTrait {
+structure C2jEndpointTrait {
   hostPrefix: String
 }
 
@@ -87,34 +117,44 @@ enum AuthType {
 
 map StaticContextParamMap {
   key: String
-  value: StaticContextParam
+  value: C2jStaticContextParam
 }
 
 
 @isa(SyntaxNode)
-structure Operation {
+structure C2jOperation {
   name: String
-  http: Http
-  input: ShapeReference
-  output: ShapeReference
+  http: C2jHttp
+  input: C2jShapeReference
+  output: C2jShapeReference
   documentationUrl: String
   documentation: String
   idempotent: Boolean
   authorizer: String
-  errors: ShapeReferenceList
-  endpointdiscovery: EndpointDiscovery
+  errors: C2jShapeReferenceList
+  endpointdiscovery: C2jEndpointDiscovery
   endpointoperation: Boolean
-  endpoint: EndpointTrait
+  endpoint: C2jEndpointTrait
   authtype: AuthType
   auth: StringList
   httpChecksumRequired: Boolean
-  httpChecksum: HttpChecksum
-  requestcompression: RequestCompression
+  httpChecksum: C2jHttpChecksum
+  requestcompression: C2jRequestCompression
   staticContextParams: StaticContextParamMap
 }
 
-// --- Shapes ---
-enum ShapeType {
+list OperationList {
+  member: C2jOperation
+}
+
+map OperationMap {
+  key: String
+  value: C2jOperation
+}
+
+
+// --- C2jShapes ---
+enum C2jShapeType {
   BLOB      =  "blob"
   BOOLEAN   =  "boolean"
   DOUBLE    =  "double"
@@ -130,89 +170,167 @@ enum ShapeType {
 
 @isa(SyntaxNode)
 @interface
-structure Shape {
-  type: ShapeType
+structure C2jShape {
+  type: C2jShapeType
 }
 
-@isa(Shape)
-structure BlobShape  {
-  @const("mx.sugus.syntax.java#ShapeType$BLOB")
-  type: ShapeType
+list ShapeList {
+  member: C2jShape
 }
 
-@isa(Shape)
-structure BooleanShape  {
-  @const("mx.sugus.syntax.java#ShapeType$BOOLEAN")
-  type: ShapeType
+map ShapeMap {
+  key: String
+  value: C2jShape
 }
 
-@isa(Shape)
-structure DoubleShape  {
-  @const("mx.sugus.syntax.java#ShapeType$DOUBLE")
-  type: ShapeType
+@isa(C2jShape)
+structure C2jBlobShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$BLOB")
+  type: C2jShapeType
 }
 
-@isa(Shape)
-structure FloatShape  {
-  @const("mx.sugus.syntax.java#ShapeType$FLOAT")
-  type: ShapeType
+@isa(C2jShape)
+structure C2jBooleanShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$BOOLEAN")
+  type: C2jShapeType
 }
 
-@isa(Shape)
-structure IntegerShape  {
-  @const("mx.sugus.syntax.java#ShapeType$INTEGER")
-  type: ShapeType
+@isa(C2jShape)
+structure C2jDoubleShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$DOUBLE")
+  type: C2jShapeType
+  max: Long
+  min: Long
 }
 
-@isa(Shape)
-structure ListShape  {
-  @const("mx.sugus.syntax.java#ShapeType$LIST")
-  type: ShapeType
+@isa(C2jShape)
+structure C2jFloatShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$FLOAT")
+  type: C2jShapeType
 }
 
-@isa(Shape)
-structure LongShape  {
-  @const("mx.sugus.syntax.java#ShapeType$LONG")
-  type: ShapeType
+@isa(C2jShape)
+structure C2jIntegerShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$INTEGER")
+  type: C2jShapeType
+  box: Boolean
+  max: Long
+  min: Long
 }
 
-@isa(Shape)
-structure MapShape  {
-  @const("mx.sugus.syntax.java#ShapeType$MAP")
-  type: ShapeType
+@isa(C2jShape)
+structure C2jListShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$LIST")
+  type: C2jShapeType
+  member: C2jShapeReference 
+  max: Long
+  min: Long
 }
 
-@isa(Shape)
-structure StringShape  {
-  @const("mx.sugus.syntax.java#ShapeType$STRING")
-  type: ShapeType
+@isa(C2jShape)
+structure C2jMapShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$MAP")
+  type: C2jShapeType
+  key: C2jShapeReference
+  value: C2jShapeReference   
+  max: Long
+  min: Long
 }
 
-@isa(Shape)
-structure StructureShape  {
-  @const("mx.sugus.syntax.java#ShapeType$STRUCTURE")
-  type: ShapeType
+@isa(C2jShape)
+structure C2jLongShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$LONG")
+  type: C2jShapeType
 }
 
-@isa(Shape)
-structure TimestampShape  {
-  @const("mx.sugus.syntax.java#ShapeType$TIMESTAMP")
-  type: ShapeType
+@isa(C2jShape)
+structure C2jStringShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$STRING")
+  type: C2jShapeType
+  enum: StringList
+  max: Long,
+  min: Long,
+  pattern: String
+}
+
+structure C2jXmlNamespace {
+  prefix: String
+  uri: String
+}
+
+structure C2jContextParam {
+}
+
+@isa(SyntaxNode)
+structure C2jMember {
+  shape: String
+  location: String
+  locationName: String
+  payload: Boolean
+  streaming: Boolean
+  requiresLength: Boolean
+  documentation: String
+  queryName: String
+  flattened: Boolean
+  xmlNamespace: C2jXmlNamespace
+  idempotencyToken: Boolean
+  deprecated: Boolean
+  deprecatedMessage: String
+  jsonvalue: Boolean
+  timestampFormat: String
+  eventpayload: Boolean
+  eventheader: Boolean
+  endpointdiscoveryid: Boolean
+  sensitive: Boolean
+  xmlAttribute: Boolean
+  deprecatedName: String
+  contextParam: C2jContextParam
+}
+
+
+map C2jMemberMap {
+  key: String
+  value: C2jMember
+}
+
+@isa(C2jShape)
+structure C2jStructureShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$STRUCTURE")
+  type: C2jShapeType
+  required: StringList
+  members: C2jMemberMap
+  documentation: String
+  error: C2jErrorTrait
+  exception: Boolean
+  fault: Boolean
+}
+
+@isa(SyntaxNode)
+structure C2jErrorTrait {
+  httpStatusCode: Integer
+  senderFault: Boolean
+  code: String
+}
+
+@isa(C2jShape)
+structure C2jTimestampShape  {
+  @const("mx.sugus.syntax.java#C2jShapeType$TIMESTAMP")
+  type: C2jShapeType
 }
 
 // ---
-map ShapeMap {
+map C2jShapeMap {
   key: String
-  value: Shape
+  value: C2jShape
 }
 
-map OperationMap {
+map C2jOperationMap {
   key: String
-  value: Operation
+  value: C2jOperation
 }
 
 @isa(SyntaxNode)
 structure C2JModel {
-   operations: OperationMap
-   shapes: ShapeMap
+   operations: C2jOperationMap
+   shapes: C2jShapeMap
 }

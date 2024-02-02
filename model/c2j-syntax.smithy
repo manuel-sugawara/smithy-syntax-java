@@ -62,12 +62,6 @@ structure C2jHttp {
   responseCode: Integer
 }
 
-enum NullabilityHandling {
-    SMITHY = "smithy"
-    NOT_NULL = "bearer"
-    NULL = "null"
-}
-
 list StringList {
   member: String
 }
